@@ -6,8 +6,8 @@
   "homepage": "https://mwangaza-lab.github.io/Privacy-Jenga",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build:pages": "tsc && vite build --mode production",
+    "build": "tsc; vite build",
+    "build:pages": "tsc; vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest",

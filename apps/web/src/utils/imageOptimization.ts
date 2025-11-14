@@ -3,7 +3,7 @@
  * Handles responsive images, lazy loading, and format optimization
  */
 
-interface ImageOptimizationOptions {
+export interface ImageOptimizationOptions {
   src: string;
   alt: string;
   width?: number;

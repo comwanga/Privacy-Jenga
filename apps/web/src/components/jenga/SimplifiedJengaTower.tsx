@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Block, SimplifiedJengaTowerProps } from '../../types';
@@ -19,7 +19,6 @@ const SimplifiedJengaTower: React.FC<SimplifiedJengaTowerProps> = ({
   const [showStabilityWarning, setShowStabilityWarning] = useState(false);
   const [lastStabilityLevel, setLastStabilityLevel] = useState<'stable' | 'unstable' | 'critical'>('stable');
   const [warningTimer, setWarningTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
 
   // Detect device capabilities and get optimal settings
   const [deviceCapabilities] = useState(() => detectDeviceCapabilities());
@@ -233,7 +232,6 @@ const SimplifiedJengaTower: React.FC<SimplifiedJengaTowerProps> = ({
 
              {/* 3D Canvas */}
        <Canvas
-         ref={canvasRef}
          camera={{ 
            position: isSmallMobile ? [8, 8, 8] : isMobile ? [7, 7, 7] : [6, 6, 6], 
            fov: isSmallMobile ? 50 : 45 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, XCircle, Lightbulb, BookOpen, Star, Target } from 'lucide-react';
+import { X, CheckCircle, XCircle, Lightbulb, Star, Target } from 'lucide-react';
 import { BlockContent, GameState } from '../types';
 import soundManager from '../services/soundManager';
 
