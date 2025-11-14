@@ -43,11 +43,19 @@ jobs:
           NODE_ENV: production
           VITE_APP_TITLE: "Privacy Jenga"
           
-      - name: Create .nojekyll file
+      - name: Verify and setup GitHub Pages files
         run: |
           cd apps/web/dist
           touch .nojekyll
           echo "✅ Created .nojekyll file"
+          if [ -f "404.html" ]; then
+            echo "✅ 404.html exists"
+          else
+            echo "❌ 404.html missing, copying from public"
+            cp ../public/404.html .
+          fi
+          echo "📂 Dist folder contents:"
+          ls -la
           
       - name: Setup artifact context
         uses: actions/upload-pages-artifact@v3
