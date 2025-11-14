@@ -15,7 +15,9 @@ import GameTutorial from '../components/GameTutorial';
 import GameStats from '../components/GameStats';
 import EndgameSummary from '../components/EndgameSummary';
 import { MobileControls } from '../components/mobile/MobileControls';
+import { MobileGestureTutorial } from '../components/mobile/MobileGestureTutorial';
 import SoundSettings from '../components/SoundSettings';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 // Import responsive design hooks
 import { useResponsiveDesign } from '../hooks/useResponsiveDesign';
@@ -23,6 +25,7 @@ import { useResponsiveDesign } from '../hooks/useResponsiveDesign';
 // Import enhanced game service and sound manager
 import enhancedGameService from '../services/simplifiedGameService';
 import soundManager from '../services/soundManager';
+import analyticsService from '../services/analyticsService';
 import { Block, BlockContent, GameState, Achievement } from '../types';
 
 // Error Boundary Component to prevent crashes
@@ -96,11 +99,26 @@ const GamePage: React.FC = () => {
   
   // Mobile responsiveness
   const { isMobile } = useResponsiveDesign();
+  
+  // Gesture tutorial and loading states
+  const [showGestureTutorial, setShowGestureTutorial] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Initialize game
   useEffect(() => {
-    const initializeGame = () => {
+    const initializeGame = async () => {
       try {
+        setIsLoading(true);
+        
+        // Track game start
+        analyticsService.trackGameEvent('game_started', isMobile ? 'mobile' : 'desktop');
+        
+        // Check if first time user on mobile
+        const hasSeenTutorial = localStorage.getItem('gesture_tutorial_completed');
+        if (isMobile && !hasSeenTutorial) {
+          setShowGestureTutorial(true);
+        }
+        
         const newGameState = enhancedGameService.initializeGame();
         const newBlocks = enhancedGameService.getBlocks();
         
@@ -109,15 +127,22 @@ const GamePage: React.FC = () => {
         
         console.log('🎮 Game initialized:', { gameState: newGameState, blocks: newBlocks.length });
         
+        // Simulate loading time for better UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        setIsLoading(false);
+        
         // Start background music
         soundManager.startBackgroundMusic();
       } catch (error) {
         console.error('🚨 Error initializing game:', error);
+        analyticsService.trackError(error as Error, 'game_initialization');
+        setIsLoading(false);
       }
     };
 
     initializeGame();
-  }, []);
+  }, [isMobile]);
 
   // Handle block click
   const handleBlockClick = useCallback(async (block: Block) => {
@@ -125,6 +150,10 @@ const GamePage: React.FC = () => {
 
     try {
       console.log('🎯 Block clicked:', block.id, block.type);
+      
+      // Track block interaction
+      analyticsService.trackInteraction('block', 'clicked');
+      analyticsService.trackGameEvent('block_selected', block.difficulty);
       
       // Play block click sound
       soundManager.playBlockClick();
@@ -279,6 +308,29 @@ const GamePage: React.FC = () => {
 
   return (
     <GameErrorBoundary>
+      {/* Mobile Gesture Tutorial */}
+      {showGestureTutorial && (
+        <MobileGestureTutorial
+          onComplete={() => {
+            setShowGestureTutorial(false);
+            localStorage.setItem('gesture_tutorial_completed', 'true');
+            analyticsService.trackGameEvent('gesture_tutorial_completed');
+          }}
+          onSkip={() => {
+            setShowGestureTutorial(false);
+            localStorage.setItem('gesture_tutorial_completed', 'true');
+            analyticsService.trackGameEvent('gesture_tutorial_skipped');
+          }}
+        />
+      )}
+
+      {/* Loading Screen */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50">
+          <SkeletonLoader variant="canvas" />
+        </div>
+      )}
+
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
         {/* Mobile-First Header */}
         <header className="relative z-30 bg-black/20 backdrop-blur-sm border-b border-white/10 sticky top-0">

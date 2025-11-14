@@ -50,8 +50,25 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           three: ['three', '@react-three/fiber', '@react-three/drei'],
+          motion: ['framer-motion'],
+          router: ['react-router-dom'],
         },
       },
     },
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+    // Minify for production
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info'],
+      },
+    },
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    // Optimize assets
+    assetsInlineLimit: 4096,
   },
 })

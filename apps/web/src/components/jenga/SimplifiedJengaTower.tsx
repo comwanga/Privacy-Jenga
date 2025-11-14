@@ -1,9 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Block, SimplifiedJengaTowerProps } from '../../types';
 import { useResponsiveDesign } from '../../hooks/useResponsiveDesign';
+import { useTouchGestures } from '../../hooks/useTouchGestures';
 import soundManager from '../../services/soundManager';
+import { detectDeviceCapabilities, getOptimalRenderSettings } from '../../utils/deviceDetection';
 
 const SimplifiedJengaTower: React.FC<SimplifiedJengaTowerProps> = ({
   blocks,
@@ -17,6 +19,35 @@ const SimplifiedJengaTower: React.FC<SimplifiedJengaTowerProps> = ({
   const [showStabilityWarning, setShowStabilityWarning] = useState(false);
   const [lastStabilityLevel, setLastStabilityLevel] = useState<'stable' | 'unstable' | 'critical'>('stable');
   const [warningTimer, setWarningTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // Detect device capabilities and get optimal settings
+  const [deviceCapabilities] = useState(() => detectDeviceCapabilities());
+  const [renderSettings] = useState(() => getOptimalRenderSettings(deviceCapabilities));
+
+  // Setup touch gestures for mobile
+  useTouchGestures({
+    onTap: (gesture) => {
+      console.log('👆 Tap detected:', gesture);
+      // Touch tap can trigger block selection if within canvas bounds
+    },
+    onSwipe: (gesture) => {
+      console.log('👉 Swipe detected:', gesture);
+      // Swipe can rotate camera if needed
+    },
+    onPinch: (gesture) => {
+      console.log('🤏 Pinch detected, scale:', gesture.scale);
+      // Pinch to zoom handled by OrbitControls
+    },
+    swipeThreshold: 30,
+    longPressDelay: 400,
+  });
+
+  // Log device capabilities for debugging
+  useEffect(() => {
+    console.log('📱 Device Capabilities:', deviceCapabilities);
+    console.log('⚙️ Render Settings:', renderSettings);
+  }, [deviceCapabilities, renderSettings]);
 
   // Filter visible blocks
   const visibleBlocks = useMemo(() => {
@@ -202,6 +233,7 @@ const SimplifiedJengaTower: React.FC<SimplifiedJengaTowerProps> = ({
 
              {/* 3D Canvas */}
        <Canvas
+         ref={canvasRef}
          camera={{ 
            position: isSmallMobile ? [8, 8, 8] : isMobile ? [7, 7, 7] : [6, 6, 6], 
            fov: isSmallMobile ? 50 : 45 
@@ -210,9 +242,17 @@ const SimplifiedJengaTower: React.FC<SimplifiedJengaTowerProps> = ({
          style={{ 
            minHeight: isSmallMobile ? '400px' : isMobile ? '500px' : '600px',
            aspectRatio: isSmallMobile ? '4/3' : '16/9',
-           maxHeight: isSmallMobile ? '70vh' : '80vh'
+           maxHeight: isSmallMobile ? '70vh' : '80vh',
+           touchAction: 'none', // Improve touch responsiveness
          }}
-         gl={{ antialias: true, alpha: false }}
+         gl={{ 
+           antialias: renderSettings.antialias,
+           alpha: false,
+           powerPreference: 'high-performance',
+           stencil: false,
+           depth: true,
+         }}
+         dpr={renderSettings.pixelRatio}
        >
         {/* Lighting */}
         <ambientLight intensity={0.4} />

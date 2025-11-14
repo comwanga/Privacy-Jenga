@@ -88,11 +88,13 @@ const ContentModal: React.FC<ContentModalProps> = ({
             <div className="flex items-center justify-between p-6 border-b border-gray-700">
               <div className="flex items-center gap-3">
                 {isQuestion ? (
-                  <BookOpen className="w-8 h-8 text-yellow-400" />
+                  <Target className="w-8 h-8 text-yellow-400" />
                 ) : (
                   <Lightbulb className="w-8 h-8 text-green-400" />
                 )}
-                <h2 className="text-2xl font-bold text-white">{content.title}</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  {isQuestion ? 'Privacy Quiz' : 'Privacy Tip'}
+                </h2>
               </div>
               <button
                 onClick={handleCloseModal}
@@ -104,10 +106,10 @@ const ContentModal: React.FC<ContentModalProps> = ({
 
             {/* Content Body */}
             <div className="p-6 space-y-6">
-              {/* Main Content */}
+              {/* Learning Objective Section */}
               <div className="bg-gray-700/50 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3">
-                  {isQuestion ? 'Learning Objective' : 'Privacy Tip'}
+                  Learning Objective
                 </h3>
                 <p className="text-gray-300 text-lg leading-relaxed">{content.content}</p>
               </div>
@@ -126,27 +128,27 @@ const ContentModal: React.FC<ContentModalProps> = ({
                 </div>
               </div>
 
-              {/* Quiz Section */}
+              {/* Quiz Challenge Section */}
               {isQuestion && questionContent && showQuiz && (
-                <div className="bg-gray-700/50 rounded-lg p-4 space-y-4">
-                  <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                    <Target className="w-5 h-5 text-yellow-400" />
-                    Quiz Challenge
-                  </h3>
-                  <p className="text-yellow-200 font-medium">{questionContent.question}</p>
+                <div className="bg-gray-800/50 rounded-lg p-5 space-y-4 border border-yellow-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Target className="w-6 h-6 text-yellow-400" />
+                    <h3 className="text-xl font-semibold text-yellow-300">Quiz Challenge</h3>
+                  </div>
+                  <p className="text-yellow-100 font-medium text-lg">{questionContent.question}</p>
                   <div className="space-y-3">
                     {questionContent.options.map((option: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => !quizSubmitted && setSelectedAnswer(index)}
-                        className={`w-full text-left p-3 rounded-lg border transition-all duration-200
+                        className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 font-medium
                           ${quizSubmitted
                             ? (index === questionContent.correctIndex
                               ? 'border-green-500 bg-green-500/20 text-green-300'
                               : (index === selectedAnswer ? 'border-red-500 bg-red-500/20 text-red-300' : 'border-gray-600 bg-gray-800 text-gray-300'))
                             : (selectedAnswer === index
-                              ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                              : 'border-gray-600 bg-gray-800 text-gray-300 hover:border-blue-500 hover:text-blue-300')
+                              ? 'border-yellow-500 bg-yellow-500/20 text-yellow-300'
+                              : 'border-gray-600 bg-gray-800 text-gray-300 hover:border-yellow-500 hover:text-yellow-300')
                           }`}
                         disabled={quizSubmitted}
                       >
