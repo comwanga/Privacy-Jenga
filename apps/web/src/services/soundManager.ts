@@ -27,6 +27,12 @@ class SoundManager {
     enabled: true
   };
 
+  // Get base URL for assets (handles GitHub Pages base path)
+  private getAssetPath(path: string): string {
+    const base = import.meta.env.BASE_URL || '/';
+    return `${base}${path.startsWith('/') ? path.slice(1) : path}`;
+  }
+
   // Audio tracks configuration
   private readonly audioTracks: AudioTrack[] = [
     // Background Music
@@ -177,13 +183,14 @@ class SoundManager {
   }
 
   private loadSound(track: AudioTrack): void {
-    const audio = new Audio(track.src);
+    const audioPath = this.getAssetPath(track.src);
+    const audio = new Audio(audioPath);
     audio.preload = 'auto';
     audio.volume = this.getAdjustedVolume(track.volume, track.type);
     
     // Handle loading errors gracefully
     audio.addEventListener('error', (e) => {
-      console.warn(`⚠️ Failed to load audio: ${track.src}`, e);
+      console.warn(`⚠️ Failed to load audio: ${audioPath} (original: ${track.src})`, e);
     });
 
     audio.addEventListener('canplaythrough', () => {
