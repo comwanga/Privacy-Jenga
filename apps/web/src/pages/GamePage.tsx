@@ -489,27 +489,6 @@ const GamePage: React.FC = () => {
                <div>Privacy Jenga - Learn Bitcoin Privacy Through Play</div>
                <div>Click blocks to learn, answer questions to progress</div>
              </div>
-
-             {/* Audio Debug Button */}
-             <div className="relative">
-               <button
-                 onClick={() => {
-                   console.log('🔊 Audio Debug Info:');
-                   console.log('Audio supported:', soundManager.isAudioSupported());
-                   console.log('Audio status:', soundManager.getAudioStatus());
-                   console.log('Sound settings:', soundManager.getSettings());
-                   console.log('Loaded sounds:', Array.from(soundManager['sounds'].keys()));
-                   soundManager.playSound('button-click');
-                 }}
-                 className="bg-black/60 backdrop-blur-sm rounded-lg p-3 border border-gray-600/50 hover:bg-gray-700/80 transition-colors"
-                 title="Audio Debug"
-               >
-                 <div className="text-center">
-                   <div className="text-gray-300 text-sm">🔧</div>
-                   <div className="text-gray-400 text-xs">Debug</div>
-                 </div>
-               </button>
-             </div>
            </div>
          </footer>
 
