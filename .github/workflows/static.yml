@@ -45,17 +45,17 @@ jobs:
           
       - name: Verify and setup GitHub Pages files
         run: |
-          cd apps/web/dist
-          touch .nojekyll
+          cd apps/web
+          touch dist/.nojekyll
           echo "✅ Created .nojekyll file"
-          if [ -f "404.html" ]; then
-            echo "✅ 404.html exists"
+          if [ -f "dist/404.html" ]; then
+            echo "✅ 404.html exists in dist"
           else
             echo "❌ 404.html missing, copying from public"
-            cp ../public/404.html .
+            cp public/404.html dist/
           fi
           echo "📂 Dist folder contents:"
-          ls -la
+          ls -la dist/
           
       - name: Setup artifact context
         uses: actions/upload-pages-artifact@v3
