@@ -90,4 +90,4 @@ This project is inspired by and based on the educational content from **[bitcoin
 **Ready to master Bitcoin privacy through interactive 3D learning?**  
 **[Start your privacy education journey now!](https://MWANGAZA-LAB.github.io/Privacy-Jenga/)**
 
-*Built with ❤️ for Bitcoin privacy education and the open-source community*
+*Built for Bitcoin privacy education and the open-source community*

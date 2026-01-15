@@ -65,17 +65,8 @@ export const usePWAInstall = (): PWAInstallPrompt => {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // Service Worker registration for PWA functionality
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/Privacy-Jenga/sw.js')
-        .then((registration) => {
-          console.log('SW registered: ', registration);
-        })
-        .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
-        });
-    }
+    // Note: Service Worker is automatically registered by vite-plugin-pwa
+    // No manual registration needed
 
     // Cleanup
     return () => {
