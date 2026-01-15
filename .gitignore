@@ -93,7 +93,8 @@ dist
 
 # Gatsby files
 .cache/
-public
+# Note: Gatsby uses 'public' for build output, but Vite uses it for static assets
+# We keep apps/web/public tracked for PWA icons and manifest
 
 # Storybook build outputs
 .out
