@@ -23,36 +23,31 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: 'npm'
-          cache-dependency-path: 'apps/web/package-lock.json'
+          node-version: "20"
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
       - name: Install dependencies
-        run: |
-          cd apps/web
-          npm ci
+        working-directory: apps/web
+        run: npm install
           
       - name: Build with Vite
-        run: |
-          cd apps/web
-          npm run build:pages
+        working-directory: apps/web
+        run: npm run build:pages
         env:
           NODE_ENV: production
           VITE_APP_TITLE: "Privacy Jenga"
           
       - name: Verify and setup GitHub Pages files
+        working-directory: apps/web
         run: |
-          cd apps/web
           touch dist/.nojekyll
           echo "✅ Created .nojekyll file"
           if [ -f "dist/404.html" ]; then
             echo "✅ 404.html exists in dist"
           else
-            echo "❌ 404.html missing, copying from public"
-            cp public/404.html dist/
+            cp public/404.html dist/ 2>/dev/null || echo "No 404.html in public"
           fi
           echo "📂 Dist folder contents:"
           ls -la dist/
